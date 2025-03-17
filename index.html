@@ -45,6 +45,7 @@
             background-color: #4A4A4A;
             color: #FFFFFF;
             box-sizing: border-box;
+            font-size: 20px;
         }
 
         .toggle-button {
@@ -70,14 +71,23 @@
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
+
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE 10 and IE 11 */
+            user-select: none;
+            /* Standard syntax */
         }
 
         button:hover {
             background-color: #007BFF;
+
         }
 
         button:active {
             background-color: #003380;
+
         }
 
 
@@ -91,6 +101,7 @@
 
         button[type="saveAndReboot"]:hover {
             background-color: #339800;
+
         }
 
         button[type="saveAndReboot"]:active {
@@ -188,19 +199,19 @@
     </div>
 
     <script>
-        function validateIP(formIp) {
+        function validateIP(formIp, element = "") {
             const ipRegex = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/;
             if (!ipRegex.test(formIp) && formIp != "") {
-                alert("Please enter a valid IP address. \n\nmin.0.0.0.0, \nmax. 255.255.255.255");
-                return;
+                if (!confirm(`Please enter a valid IP address. \n\nmin.0.0.0.0, \nmax. 255.255.255.255\n\nError with ${element}: ${formIp}`));
+                throw 0;
             }
         };
 
-        function validatePort(destPort) {
+        function validatePort(destPort, element = "") {
             const portNumber = parseInt(destPort, 10);
-            if (isNaN(portNumber) || portNumber < 1 || portNumber > 65535 && destPort != "") {
-                confirm("Please enter a valid port number (1-65535).");
-                return;
+            if ((isNaN(portNumber) || portNumber < 1 || portNumber > 65535) && destPort != "") {
+                confirm(`Please enter a valid port number (1-65535).\n\nError with ${element}: ${destPort}`);
+                throw 0;
             }
         };
 
@@ -208,18 +219,8 @@
             const passwordField = document.getElementById('password');
             passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
         }
-        /*
-                function toggleEnable(formNumber) {
-                    const toggleEnableBtn = document.getElementById(`toggleEnable${formNumber}`);
-        
-                    // Get the current state from the custom data attribute
-                    let isEnabled = toggleEnableBtn.getAttribute('data-state') === 'enabled';
-        
-                    // Toggle the state
-                    toggleEnableBtn.textContent = isEnabled ? 'Off' : 'On';
-                    toggleEnableBtn.setAttribute('data-state', isEnabled ? 'disabled' : 'enabled');
-                    toggleEnableBtn.style.backgroundColor = isEnabled ? '#424242' : '#339800';
-                } */
+
+
 
         function generateForms({ triggerCount }) {
             const container = document.getElementById('formPlaceholder');
@@ -279,7 +280,7 @@
                 const testSaveButton = document.createElement('button');
                 testSaveButton.type = 'button';
                 testSaveButton.classList = 'test-btn';
-                testSaveButton.textContent = `Test / Save`;
+                testSaveButton.textContent = `Test & Save`;
 
                 // Handle pointer down (press)
                 testSaveButton.addEventListener('pointerdown', () => {
@@ -302,7 +303,7 @@
                         testSaveButton.classList.add('saved');
                         setTimeout(() => {
 
-                            testSaveButton.textContent = `Test / Save`;
+                            testSaveButton.textContent = `Test & Save`;
                             testSaveButton.classList.remove('saved');
                         }, 1000);
                     }, 1000);
@@ -326,33 +327,41 @@
 
 
         function saveAndReboot() {
+
+
+
+
+            const deviceNetworkConfig = {
+                deviceName: document.getElementById("btnName").value,
+                deviceIp: document.getElementById("StaticIp").value,
+                devicePort: document.getElementById("DevicePort").value,
+                ssid: document.getElementById("SSID").value,
+                password: document.getElementById("password").value,
+                destIp: document.getElementById("DestinationIp").value,
+                destPort: document.getElementById("DestinationPort").value,
+            };
+
+
+
+
+            // Validate IP
+
+            validateIP(deviceNetworkConfig.deviceIp, "Device IP");
+            validatePort(deviceNetworkConfig.devicePort, "Device Port");
+
+            validateIP(deviceNetworkConfig.destIp, "Destination IP")
+            validatePort(deviceNetworkConfig.destPort, "Destination Port");
+
+
+
             // Check if user is sure
             if (!confirm("Are you sure you want to reboot?")) { return; };
 
-            //if (isSure) {
 
-            let formToSave = {
-                deviceNetworkConfig: {
-                    deviceName: document.getElementById("btnName").value,
-                    deviceIp: document.getElementById("StaticIp").value,
-                    devicePort: document.getElementById("DevicePort").value,
-                    ssid: document.getElementById("SSID").value,
-                    password: document.getElementById("password").value,
-                    destIp: document.getElementById("DestinationIp").value,
-                    destPort: document.getElementById("DestinationPort").value,
-                },
-            };
 
-            // Gather destinations data
-            /*  for (let i = 1; i < 4; i++) {
-                 formToSave[`trigger${i}`] = {
-                     enabled: document.getElementById(`toggleEnable${i}`).getAttribute('data-state') == 'enabled' ? true : false,
-                     UTPMessage: document.getElementById(`MessageTrigger${i}`).value,
-                 };
-             } */
-
-            console.log(formToSave)
-
+            console.log(`SAVING Network Settings | data: ${JSON.stringify(deviceNetworkConfig)}`);
+            debugLog(`SAVING Network Settings | data: ${JSON.stringify(deviceNetworkConfig)}`);
+            console.log(deviceNetworkConfig)
 
             /*   fetch('/saveAndReboot', {
                   method: 'POST',
@@ -380,35 +389,27 @@
 
 
 
-        function testMessage(btnId, enableBtnId, save,) {
-            // Get dynamic element IDs based on btn and msg
-            const enabled = document
-                .getElementById(enableBtnId)
-                .getAttribute('data-state');
-            const message = document
-                .getElementById(btnId)
-                .value.trim();
-
-
-
-
-            // Check if all fields are filled out
-            /*  if (!oscMessage) {
-                 alert(`Please type a message for testing.`);
-                 return;
-             } */
-
-            // Data object to send
-            const btnData = {
-                btnId,
-                message,
-                enabled: enabled === 'on' ? true : false
-            };
-
-            console.log(`Testing message for ${btnId} | message: ${message} | enabled: ${enabled} | data: ${JSON.stringify(btnData)}`);
-
-            //////function end/////
-        }
+        /*         function testMessage(btnId, enableBtnId, save,) {
+                    // Get dynamic element IDs based on btn and msg
+                    const enabled = document
+                        .getElementById(enableBtnId)
+                        .getAttribute('data-state');
+                    const message = document
+                        .getElementById(btnId)
+                        .value.trim();
+        
+        
+                    // Data object to send
+                    const btnData = {
+                        btnId,
+                        message,
+                        enabled: enabled === 'on' ? true : false
+                    };
+        
+                    console.log(`Testing message for ${btnId} | message: ${message} | enabled: ${enabled} | data: ${JSON.stringify(btnData)}`);
+        
+                    //////function end/////
+                } */
 
 
         /**
@@ -433,13 +434,18 @@
 
             if (direction === 'up') {
                 // Send the up message
-                console.log(`Testing UP message for ${extractedData.triggerTitle} | Up Message: ${extractedData.upMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+                console.log(`TESTING UP message for ${extractedData.triggerTitle} | Up Message: ${extractedData.upMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+
+                debugLog(`TESTING UP message for ${extractedData.triggerTitle} | Up Message: ${extractedData.upMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+
             } else if (direction === 'down') {
                 // Send the down message
-                console.log(`Testing DOWN message for ${extractedData.triggerTitle} | Down Message: ${extractedData.downMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+                console.log(`TESTING DOWN message for ${extractedData.triggerTitle} | Down Message: ${extractedData.downMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+                debugLog(`TESTING DOWN message for ${extractedData.triggerTitle} | Down Message: ${extractedData.downMessage} | enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
             } else if (direction === 'save') {
                 // Save the data
                 console.log(`SAVING message for ${extractedData.triggerTitle} | Down Message: ${extractedData.downMessage} | Up Message: ${extractedData.upMessage} | Enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
+                debugLog(`SAVING message for ${extractedData.triggerTitle} | Down Message: ${extractedData.downMessage} | Up Message: ${extractedData.upMessage} | Enabled: ${extractedData.enabled} | data: ${JSON.stringify(extractedData)}`);
             }
 
 
@@ -514,7 +520,33 @@
                 })();
         });// Func end
 
-       
+
+        //////////////////////////////////////////////////////////
+        // Create debug console
+        const debugConsole = document.createElement('div');
+        debugConsole.style.position = 'fixed';
+        debugConsole.style.bottom = '10px';
+        debugConsole.style.right = '10px';
+        debugConsole.style.width = '500px';
+        debugConsole.style.height = '150px';
+        debugConsole.style.background = 'rgba(0,0,0,0.8)';
+        debugConsole.style.color = '#fff';
+        debugConsole.style.padding = '10px';
+        debugConsole.style.overflowY = 'auto';
+        debugConsole.style.fontSize = '12px';
+        debugConsole.style.zIndex = '10000';
+        debugConsole.style.borderRadius = '8px';
+        debugConsole.style.boxShadow = '0 2px 10px rgba(0,0,0,0.3)';
+        document.body.appendChild(debugConsole);
+
+        // Function to log messages
+        function debugLog(message) {
+            const logEntry = document.createElement('div');
+            logEntry.textContent = message;
+            logEntry.style.marginBottom = "20px"; // Adds space between logs
+            debugConsole.appendChild(logEntry);
+            debugConsole.scrollTop = debugConsole.scrollHeight; // Auto-scroll to latest
+        }
 
     </script>
 </body>
