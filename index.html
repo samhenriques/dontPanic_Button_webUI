@@ -90,10 +90,10 @@
 
         }
 
-
+        /* 
         button[type="saveAndReboot"] {
             background-color: #256f00;
-            /* Red for delete */
+           
             color: white;
             height: 50px;
         }
@@ -106,7 +106,7 @@
 
         button[type="saveAndReboot"]:active {
             background-color: #1a4d01;
-        }
+        } */
 
         button[data-state="on"] {
             background-color: #339800;
@@ -132,7 +132,8 @@
             /* 2/3 width */
         }
 
-        .test-btn.saved {
+        .test-btn.saved,
+        button.saved {
             background-color: #339800;
             /* Green when saved */
         }
@@ -357,7 +358,11 @@
             // Check if user is sure
             if (!confirm("Are you sure you want to reboot?")) { return; };
 
-
+            document.getElementById("saveAndReboot").classList.add('saved');
+            document.getElementById("saveAndReboot").textContent = "Saving then Rebooting...";
+            /* setTimeout(() => {
+                document.getElementById("saveAndReboot").textContent = "Save Network Settings and Reboot";
+            }, 2000); */
 
             console.log(`SAVING Network Settings | data: ${JSON.stringify(deviceNetworkConfig)}`);
             debugLog(`SAVING Network Settings | data: ${JSON.stringify(deviceNetworkConfig)}`);
