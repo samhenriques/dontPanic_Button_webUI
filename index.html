@@ -13,6 +13,7 @@
             color: #FFFFFF;
         }
 
+
         .form-container {
             margin-bottom: 20px;
             padding: 15px;
@@ -48,21 +49,16 @@
             font-size: 20px;
         }
 
-        .toggle-button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 6px 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+        /* input::placeholder {
+            font-size: 20px;
+          
+        } */
+
+
 
 
         button {
-            padding: 20px 30px;
+            padding: 15px 30px;
             margin-top: 30px;
             margin-bottom: 10px;
             background-color: #005dc0;
@@ -71,7 +67,7 @@
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
-
+            font-size: 20px;
             -webkit-user-select: none;
             /* Safari */
             -ms-user-select: none;
@@ -89,24 +85,6 @@
             background-color: #003380;
 
         }
-
-        /* 
-        button[type="saveAndReboot"] {
-            background-color: #256f00;
-           
-            color: white;
-            height: 50px;
-        }
-
-
-        button[type="saveAndReboot"]:hover {
-            background-color: #339800;
-
-        }
-
-        button[type="saveAndReboot"]:active {
-            background-color: #1a4d01;
-        } */
 
         button[data-state="on"] {
             background-color: #339800;
@@ -163,6 +141,12 @@
         <label for="DevicePort">Port:</label>
         <input type="text" id="DevicePort" name="DevicePort" placeholder="Device Port">
 
+        <label for="subnet">Subnet:</label>
+        <input type="text" id="subnet" name="subnet" placeholder="(optional)">
+
+        <label for="router">Router:</label>
+        <input type="text" id="router" name="router" placeholder="(optional)">
+
         <label for="SSID">SSID:</label>
         <input type="text" id="SSID" name="SSID" placeholder="WI-FI Network Name">
 
@@ -193,10 +177,11 @@
 
     <div class="form-container">
         <h2>Reply Messages</h2>
-        <p>dpButton will reply to UDP messages with the device information:</p>
+        <p>dontPanic:button will reply to UDP messages with device information:</p>
         <p>getBattery will reply .......</p>
-        <p>getWifi will reply .......</p>
+        <p>getRSSI will reply .......</p>
         <p>getIp will reply .......</p>
+        <p>getWifiCredentials set on device screen .......</p>
     </div>
 
     <script>
@@ -336,6 +321,8 @@
                 deviceName: document.getElementById("btnName").value,
                 deviceIp: document.getElementById("StaticIp").value,
                 devicePort: document.getElementById("DevicePort").value,
+                subnet: document.getElementById("subnet").value,
+                router: document.getElementById("router").value,
                 ssid: document.getElementById("SSID").value,
                 password: document.getElementById("password").value,
                 destIp: document.getElementById("DestinationIp").value,
@@ -349,6 +336,8 @@
 
             validateIP(deviceNetworkConfig.deviceIp, "Device IP");
             validatePort(deviceNetworkConfig.devicePort, "Device Port");
+            validatePort(deviceNetworkConfig.subnet, "Subnet IP");
+            validatePort(deviceNetworkConfig.router, "Router IP");
 
             validateIP(deviceNetworkConfig.destIp, "Destination IP")
             validatePort(deviceNetworkConfig.destPort, "Destination Port");
@@ -532,7 +521,7 @@
         debugConsole.style.position = 'fixed';
         debugConsole.style.bottom = '10px';
         debugConsole.style.right = '10px';
-        debugConsole.style.width = '500px';
+        debugConsole.style.width = '400px';
         debugConsole.style.height = '150px';
         debugConsole.style.background = 'rgba(0,0,0,0.8)';
         debugConsole.style.color = '#fff';
