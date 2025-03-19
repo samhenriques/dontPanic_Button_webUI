@@ -74,15 +74,22 @@
             /* IE 10 and IE 11 */
             user-select: none;
             /* Standard syntax */
-        }
+            -webkit-tap-highlight-color: transparent;
+            /* Removes the default highlight */        }
 
         button:hover {
-            background-color: #007BFF;
+            background-color: #0060c6;
 
         }
 
         button:active {
-            background-color: #003380;
+            background-color:#00448c;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            /*   transform: translateY(5px); */
+            /* Moves the button slightly down */
+            outline: 2px solid rgba(0, 0, 0, 0.3);
+            /* Soft glow on focus */
+
 
         }
 
@@ -110,6 +117,8 @@
             /* 2/3 width */
         }
 
+
+        /* Save state style */
         .test-btn.saved,
         button.saved {
             background-color: #339800;
@@ -274,11 +283,13 @@
                     test_save_Trigger(btn, buttonContainer, 'down');
                     testSaveButton.textContent = `Testing Down Message...`;
 
+
                 });
 
                 // Handle pointer up (release)
                 testSaveButton.addEventListener('pointerup', () => {
                     // testMessage(upMessageEl.id, `toggleEnableBtn${btn}`);
+
                     test_save_Trigger(btn, buttonContainer, 'up');
                     testSaveButton.textContent = `Testing Up Message...`;
 
